@@ -1,0 +1,38 @@
+﻿@model IEnumerable<CinemaBookingApplication.Domain.DomainModels.Hall>
+@{
+    ViewData["Title"] = "Halls";
+}
+<h1 class="mb-3">Halls</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Capacity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Capacity</td>
+                    <td class="text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+     <p class="text-muted">No halls yet.</p>
+}

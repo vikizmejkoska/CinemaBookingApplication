@@ -1,0 +1,58 @@
+﻿@model IEnumerable<CinemaBookingApplication.Domain.DomainModels.Movie>
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<h1 class="mb-3">Movies</h1>
+
+<div class="d-flex gap-2 mb-3 align-items-center">
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <form asp-action="Import" method="post" class="d-flex gap-2">
+        <select name="query" class="form-select w-auto">
+            <option value="popular">Popular</option>
+            <option value="top_rated">Top rated</option>
+            <option value="The Matrix">Search: "The Matrix"</option>
+        </select>
+        <button type="submit" class="btn btn-success">Import from TMDB</button>
+    </form>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Runtime</th>
+                <th>Rating</th>
+                <th>Poster</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Runtime</td>
+                    <td>@item.Rating</td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(item.PosterUrl))
+                        {
+                            <img src="@item.PosterUrl" alt="poster" style="height:64px" />
+                        }
+                    </td>
+                    <td class="text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No movies yet. Try importing from TMDB.</p>
+}

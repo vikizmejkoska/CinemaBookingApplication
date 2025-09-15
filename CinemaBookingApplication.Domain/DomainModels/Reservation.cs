@@ -1,0 +1,13 @@
+﻿namespace CinemaBookingApplication.Domain.DomainModels;
+public class Reservation : BaseEntity
+{
+    public Guid ScreeningId { get; set; }
+    public Screening? Screening { get; set; }
+
+    public string UserId { get; set; } = default!;
+    public int Quantity { get; set; }
+    public decimal TotalPrice { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public string Status { get; set; } = "Pending"; // Pending | Confirmed | Cancelled
+}

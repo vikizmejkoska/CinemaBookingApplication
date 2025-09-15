@@ -1,0 +1,46 @@
+﻿@model IEnumerable<CinemaBookingApplication.Domain.DomainModels.Reservation>
+@{
+    ViewData["Title"] = "Reservations";
+}
+<h1 class="mb-3">Reservations</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Start</th>
+                <th>User</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Screening?.Movie?.Title</td>
+                    <td>@r.Screening?.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@r.UserId</td>
+                    <td>@r.Quantity</td>
+                    <td>@r.TotalPrice</td>
+                    <td>@r.Status</td>
+                    <td class="text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@r.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@r.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@r.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+     <p class="text-muted">No reservations yet.</p>
+}
