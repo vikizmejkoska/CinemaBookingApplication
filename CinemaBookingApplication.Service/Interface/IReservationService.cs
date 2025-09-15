@@ -5,9 +5,14 @@ namespace CinemaBookingApplication.Service.Interface;
 
 public interface IReservationService
 {
-    List<Reservation> AllWithIncludes();
+    List<Reservation> All();
     Reservation? Get(Guid id);
-    Reservation Create(Reservation r);
-    Reservation Update(Reservation r);
+    Reservation Create(string userId, Guid screeningId, int quantity);
+
+   // Reservation Update(Reservation r);
     void Delete(Guid id);
+
+    Reservation Confirm(Guid id, string currentUserId, bool isAdmin = false);
+    Reservation Cancel(Guid id, string currentUserId, bool isAdmin = false);
+    int ExpireOlderPending(TimeSpan ttl);
 }
