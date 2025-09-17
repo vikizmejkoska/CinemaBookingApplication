@@ -1,27 +1,61 @@
 ﻿@model CinemaBookingApplication.Domain.Dtos.CreateReservationViewModel
 @{
     ViewData["Title"] = "Create Reservation";
+    var available = ViewBag.Available as int?;
 }
 
-<h1>Create Reservation</h1>
+<h1 class="mb-3">Create Reservation</h1>
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label class="form-label">Screening</label>
-        <select asp-for="ScreeningId" class="form-select" asp-items="ViewBag.ScreeningId"></select>
+<!-- show all validation/errors (e.g., "Not enough seats. Available: 3") -->
+<div asp-validation-summary="All" class="alert" role="alert"></div>
+
+<form asp-action="Create" method="post" class="row g-3">
+    <div class="col-12">
+        <label asp-for="ScreeningId" class="form-label">Screening</label>
+        <select asp-for="ScreeningId"
+                class="form-select"
+                asp-items="ViewBag.ScreeningId"
+                id="ScreeningId">
+            <option value="">-- choose screening --</option>
+        </select>
         <span asp-validation-for="ScreeningId" class="text-danger"></span>
+
+        <div class="form-text mt-1">
+            Available seats: <span id="avail-text">@((available?.ToString()) ?? "—")</span>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Quantity" class="form-label"></label>
-        <input asp-for="Quantity" class="form-control" />
+    <div class="col-12 col-sm-6 col-md-4">
+        <label asp-for="Quantity" class="form-label">Quantity</label>
+        <input asp-for="Quantity" class="form-control" type="number" min="1" step="1" />
         <span asp-validation-for="Quantity" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Reserve</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Reserve</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+    </div>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const ddl = document.getElementById('ScreeningId');
+            const out = document.getElementById('avail-text');
+
+            function loadAvail(id) {
+                if (!id) { out.textContent = '—'; return; }
+                fetch('@Url.Action("Seats", "Reservations")' + '?screeningId=' + encodeURIComponent(id))
+                    .then(r => r.ok ? r.json() : { available: '-' })
+                    .then(d => out.textContent = (d && d.available !== undefined) ? d.available : '—')
+                    .catch(() => out.textContent = '—');
+            }
+
+            ddl.addEventListener('change', function () { loadAvail(this.value); });
+
+            // if returning after an error with a selected screening, show availability immediately
+            if (ddl.value) loadAvail(ddl.value);
+        })();
+    </script>
 }

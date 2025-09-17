@@ -141,4 +141,15 @@ public class ReservationService : IReservationService
         var e = Get(id);
         if (e != null) _reservations.Delete(e);
     }
+    public List<Reservation> ForUser(string userId)
+    => _reservations.GetAll(
+           selector: x => x,
+           predicate: x => x.UserId == userId,
+           include: q => q.Include(r => r.Screening)
+                          .ThenInclude(s => s.Movie)
+                          .Include(r => r.Screening)
+                          .ThenInclude(s => s.Hall))
+       .ToList();
+
+
 }

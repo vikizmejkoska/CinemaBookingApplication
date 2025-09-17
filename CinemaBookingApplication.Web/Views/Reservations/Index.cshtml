@@ -46,7 +46,7 @@
                 <td>@r.TotalPrice.ToString("C")</td>
                 <td>@r.Status</td>
                 <td class="d-flex gap-2">
-                    <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-link">Details</a>
+                    <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-link link-secondary">Details</a>
 
                     @if (r.Status == ReservationStatus.Pending && (User.IsInRole("Admin") || r.UserId == currentUserId))
                     {

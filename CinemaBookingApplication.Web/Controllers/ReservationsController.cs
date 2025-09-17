@@ -26,11 +26,15 @@ public class ReservationsController : Controller
     // GET: Reservations
     public IActionResult Index()
     {
-        return View(_reservations.All());
+        if (User.IsInRole("Admin"))
+            return View(_reservations.All());
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        return View(_reservations.ForUser(userId));
     }
 
     // GET: Reservations/Create
-    [Authorize(Roles = "Admin")]
+
     public IActionResult Create()
     {
         // dropdown со сите проекции: "MovieTitle (Hall) - StartTime - Price"
@@ -47,7 +51,7 @@ public class ReservationsController : Controller
     }
 
     // POST: Reservations/Create
-    [Authorize(Roles = "Admin")]
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create(CreateReservationViewModel model)
@@ -55,6 +59,9 @@ public class ReservationsController : Controller
         if (!ModelState.IsValid)
         {
             ReloadScreeningsDropDown(model.ScreeningId);
+            // ако има селекција, покажи колку места има моментално
+            if (model.ScreeningId != Guid.Empty)
+                ViewBag.Available = _screenings.AvailableSeats(model.ScreeningId);
             return View(model);
         }
 
@@ -68,11 +75,15 @@ public class ReservationsController : Controller
         }
         catch (Exception ex)
         {
+            // оваа порака веќе содржи: "Not enough seats. Available: {available}"
             ModelState.AddModelError(string.Empty, ex.Message);
+
             ReloadScreeningsDropDown(model.ScreeningId);
+            ViewBag.Available = _screenings.AvailableSeats(model.ScreeningId); // покажи преостанати
             return View(model);
         }
     }
+
 
     // GET: Reservations/Details/5
     public IActionResult Details(Guid? id)
@@ -163,5 +174,14 @@ public IActionResult ExpireStale()
     TempData["Toast"] = $"Expired {n} old pending reservations.";
     return RedirectToAction(nameof(Index));
 }
+
+    [HttpGet]
+    public IActionResult Seats(Guid screeningId)
+    {
+        if (screeningId == Guid.Empty) return Json(new { available = 0 });
+        var available = _screenings.AvailableSeats(screeningId);
+        return Json(new { available });
+    }
+
 
 }

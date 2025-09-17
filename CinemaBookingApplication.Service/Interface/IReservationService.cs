@@ -15,4 +15,5 @@ public interface IReservationService
     Reservation Confirm(Guid id, string currentUserId, bool isAdmin = false);
     Reservation Cancel(Guid id, string currentUserId, bool isAdmin = false);
     int ExpireOlderPending(TimeSpan ttl);
+    List<Reservation> ForUser(string userId);
 }

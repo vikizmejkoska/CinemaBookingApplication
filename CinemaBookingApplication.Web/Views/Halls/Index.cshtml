@@ -29,10 +29,10 @@
                     <td class="text-nowrap">
                         @if (isAdmin)
                         {
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="link-primary">Edit</a>
                             <span class="mx-1 text-muted">|</span>
                         }
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="link-secondary">Details</a>
                         @if (isAdmin)
                         {
                             <span class="mx-1 text-muted">|</span>
@@ -42,7 +42,7 @@
                                   asp-antiforgery="true"
                                   class="d-inline"
                                   onsubmit="return confirm('Delete this hall?');">
-                                <button type="submit" class="btn btn-link p-0 align-baseline">Delete</button>
+                                <button type="submit" class="btn btn-link p-0 align-baseline link-danger">Delete</button>
                             </form>
                         }
                     </td>
