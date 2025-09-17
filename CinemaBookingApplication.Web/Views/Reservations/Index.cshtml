@@ -3,15 +3,9 @@
 @using System.Security.Claims
 @{
     ViewData["Title"] = "Reservations";
-    var toast = TempData["Toast"] as string;
     var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 <h1>Reservations</h1>
-
-@if (!string.IsNullOrWhiteSpace(toast))
-{
-    <div class="alert alert-info">@toast</div>
-}
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>

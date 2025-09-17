@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using CinemaBookingApplication.Domain.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinemaBookingApplication.Domain.DomainModels;
 public class Reservation : BaseEntity
@@ -6,7 +7,8 @@ public class Reservation : BaseEntity
     public Guid ScreeningId { get; set; }
     public Screening? Screening { get; set; }
 
-    public string UserId { get; set; } = default!;
+    public string UserId { get; set; } = default!;       
+    public ApplicationUser? User { get; set; }           
     public int Quantity { get; set; }
    
     [Column(TypeName = "decimal(18,2)")]

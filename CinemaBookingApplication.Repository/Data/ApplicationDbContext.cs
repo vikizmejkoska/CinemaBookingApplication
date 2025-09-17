@@ -14,6 +14,23 @@ namespace CinemaBookingApplication.Repository.Data
         public DbSet<Screening> Screenings => Set<Screening>();
         public DbSet<Reservation> Reservations => Set<Reservation>();
 
-  
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Reservation -> ApplicationUser (FK UserId), без каскадно бришење
+            builder.Entity<Reservation>(entity =>
+            {
+                entity.HasOne(r => r.User)
+                      .WithMany() // ако во ApplicationUser немаш колекција Reservations
+                      .HasForeignKey(r => r.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+
+            //  индекс за побрзи пребарувања
+            builder.Entity<Reservation>()
+                   .HasIndex(r => new { r.ScreeningId, r.UserId });
+        }
     }
 }
