@@ -3,9 +3,9 @@
 Ентитети: Movie, Hall, Screening, Reservation, ApplicationUser (+ DTO: CreateReservationViewModel).
 
 Релации:
-1-* меѓу Movie и Screening
-1-* меѓу Hall и Screening
-1-* меѓу Screening и Reservation
+1-* меѓу Movie и Screening,
+1-* меѓу Hall и Screening,
+1-* меѓу Screening и Reservation,
 1-* меѓу ApplicationUser и Reservation
 
 Пристап:
