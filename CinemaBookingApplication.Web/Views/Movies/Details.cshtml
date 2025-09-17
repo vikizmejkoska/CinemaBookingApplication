@@ -1,42 +1,83 @@
 ﻿@model CinemaBookingApplication.Domain.DomainModels.Movie
 @{
     ViewData["Title"] = "Details";
+    var isAdmin = User.IsInRole("Admin");
+    var hasPoster = !string.IsNullOrWhiteSpace(Model.PosterUrl);
 }
 
-<h1>Details</h1>
+<h1 class="mb-4 text-center">@Model.Title</h1>
 
-<h4>Movie</h4>
-<hr />
-<dl class="row">
-    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Title)</dt>
-    <dd class="col-sm-10">@Html.DisplayFor(m => m.Title)</dd>
+<style>
+    /* Две еднакви, тесни колони и центрирање на целиот блок */
+    .movie-detail {
+        display: grid;
+        grid-template-columns: 360px 360px; /* Исти ширини: лево = колку постерот */
+        gap: 1.5rem;
+        justify-content: center; /* центрирај го распоредот на страницата */
+        align-items: start;
+        margin: 0 auto;
+    }
 
-    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Overview)</dt>
-    <dd class="col-sm-10">@Html.DisplayFor(m => m.Overview)</dd>
+        .movie-detail .poster {
+            width: 360px; /* малку поголем постер */
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            border-radius: .5rem;
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+        }
 
-    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Runtime)</dt>
-    <dd class="col-sm-10">@Html.DisplayFor(m => m.Runtime)</dd>
+        .movie-detail .info {
+            width: 360px; /* исто колку сликата */
+            text-align: left; /* содржината останува лево порамнета */
+        }
 
-    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Rating)</dt>
-    <dd class="col-sm-10">@Html.DisplayFor(m => m.Rating)</dd>
+        .movie-detail dt {
+            font-weight: 600;
+        }
 
-    <dt class="col-sm-2">Poster</dt>
-    <dd class="col-sm-10">
-        @if (!string.IsNullOrWhiteSpace(Model.PosterUrl))
+        .movie-detail dd {
+            margin-bottom: .5rem;
+        }
+
+</style>
+
+<div class="movie-detail">
+    <!-- LEFT: тесен инфо-панел (исто колку сликата) -->
+    <div class="info">
+        <dl>
+            <dt>Overview</dt>
+            <dd>@(string.IsNullOrWhiteSpace(Model.Overview) ? "—" : Model.Overview)</dd>
+
+            <dt>Runtime</dt>
+            <dd>@(Model.Runtime > 0 ? $"{Model.Runtime} min" : "—")</dd>
+
+            <dt>Rating</dt>
+            <dd>@Model.Rating.ToString("0.0")</dd>
+        </dl>
+
+        <div class="mt-2">
+            @if (isAdmin)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Edit</a>
+            }
+            <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <!-- RIGHT: постер -->
+    <div class="text-center">
+        @if (hasPoster)
         {
             <img src="@Model.PosterUrl"
                  alt="@Model.Title poster"
-                 class="img-fluid rounded shadow-sm"
-                 style="max-height:350px" />
+                 class="poster" />
         }
         else
         {
-            <span class="text-muted">No poster</span>
+            <div class="bg-light border rounded d-inline-flex align-items-center justify-content-center"
+                 style="width:360px; aspect-ratio:2/3;">
+                <span class="text-muted">No poster</span>
+            </div>
         }
-    </dd>
-</dl>
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    </div>
 </div>

@@ -7,10 +7,30 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CinemaBookingApplication.Web.styles.css" asp-append-version="true" />
+
+    <style>
+    
+        .navbar-dark.bg-cinema-dark {
+            background-color: #2f343a;
+        }
+       
+        body.bg-cinema-light {
+            background-color: #f2f4f7;
+        }
+      
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255,255,255,.85);
+        }
+
+            .navbar-dark .navbar-nav .nav-link:hover,
+            .navbar-dark .navbar-nav .nav-link:focus {
+                color: #fff;
+            }
+    </style>
 </head>
-<body>
+<body class="bg-cinema-light">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-cinema-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CinemaBooking</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
@@ -23,7 +43,7 @@
                         <li class="nav-item"><a class="nav-link" asp-controller="Screenings" asp-action="Index">Screenings</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Halls" asp-action="Index">Halls</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Reservations" asp-action="Index">Reservations</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+                      
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -34,7 +54,7 @@
     <div class="container">
         @if (TempData["Toast"] is string toast && !string.IsNullOrWhiteSpace(toast))
         {
-            <div class="alert alert-info">@toast</div>
+            <div class="alert alert-info mt-2">@toast</div>
         }
 
         <main role="main" class="pb-3">

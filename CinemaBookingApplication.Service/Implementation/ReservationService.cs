@@ -117,10 +117,13 @@ public class ReservationService : IReservationService
     public int ExpireOlderPending(TimeSpan ttl)
     {
         var now = DateTime.UtcNow;
+        var cutoff = now - ttl; // <-- пресметај надвор од query
+
         var toExpire = _reservations.GetAll(
                 selector: x => x,
                 predicate: x => x.Status == ReservationStatus.Pending
-                                && (now - x.CreatedAt) > ttl)
+                                && x.CreatedAt < cutoff
+            )
             .ToList();
 
         foreach (var r in toExpire)
@@ -128,8 +131,10 @@ public class ReservationService : IReservationService
             r.Status = ReservationStatus.Expired;
             _reservations.Update(r);
         }
+
         return toExpire.Count;
     }
+
 
     public void Delete(Guid id)
     {

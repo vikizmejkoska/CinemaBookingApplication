@@ -1,12 +1,16 @@
 ﻿@model IEnumerable<CinemaBookingApplication.Domain.DomainModels.Hall>
 @{
     ViewData["Title"] = "Halls";
+    var isAdmin = User.IsInRole("Admin");
 }
 <h1 class="mb-3">Halls</h1>
 
-<p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
+@if (isAdmin)
+{
+    <p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
+}
 
-@if (Model != null && Model.Any())
+@if (Model?.Any() == true)
 {
     <table class="table table-striped">
         <thead>
@@ -23,9 +27,24 @@
                     <td>@item.Name</td>
                     <td>@item.Capacity</td>
                     <td class="text-nowrap">
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        @if (isAdmin)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <span class="mx-1 text-muted">|</span>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        @if (isAdmin)
+                        {
+                            <span class="mx-1 text-muted">|</span>
+                            <form asp-action="Delete"
+                                  asp-route-id="@item.Id"
+                                  method="post"
+                                  asp-antiforgery="true"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Delete this hall?');">
+                                <button type="submit" class="btn btn-link p-0 align-baseline">Delete</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
@@ -34,5 +53,5 @@
 }
 else
 {
-     <p class="text-muted">No halls yet.</p>
+    <p class="text-muted">No halls yet.</p>
 }

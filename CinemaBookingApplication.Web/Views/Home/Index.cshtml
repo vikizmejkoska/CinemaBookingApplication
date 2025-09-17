@@ -2,8 +2,16 @@
     ViewData["Title"] = "Welcome";
 }
 <div class="py-5">
-    <h1 class="display-5 text-center mb-4">Welcome to CinemaBooking</h1>
-    <p class="text-center text-muted mb-5">Manage movies, halls, screenings and reservations.</p>
+
+    <div class="text-center">
+        <img src="~/img/hero-popcorn.png"
+             alt="Cinema popcorn and film reel"
+             class="img-fluid d-inline-block"
+             style="max-height:290px;" />
+    </div>
+
+    <h1 class="display-5 text-center mb-4">Movie night, made easy.</h1>
+    <p class="text-center text-muted mb-5">Explore movies, pick a screening, and you’re in.</p>
 
     <div class="row g-3">
         <div class="col-md-3">
@@ -40,7 +48,7 @@
             <a asp-controller="Reservations" asp-action="Index" class="text-decoration-none">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
-                        <h5 class="card-title mb-2">Reservations</h5>
+                        <h5 class="card-title mb-2" style="color:#2f343a;">Reservations</h5>
                         <div class="text-muted">View bookings</div>
                     </div>
                 </div>

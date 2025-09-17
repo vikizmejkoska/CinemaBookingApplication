@@ -1,6 +1,7 @@
 ﻿// CinemaBookingApplication.Web/Controllers/ScreeningsController.cs
 using CinemaBookingApplication.Domain.DomainModels;
 using CinemaBookingApplication.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -29,6 +30,7 @@ public class ScreeningsController : Controller
         return View(s);
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         ViewData["HallId"] = new SelectList(_halls.All(), "Id", "Name");
@@ -36,6 +38,7 @@ public class ScreeningsController : Controller
         return View();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create([Bind("MovieId,HallId,StartTime,Price,Id")] Screening screening)
@@ -51,6 +54,7 @@ public class ScreeningsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Edit(Guid? id)
     {
         if (id is null) return NotFound();
@@ -62,6 +66,7 @@ public class ScreeningsController : Controller
         return View(s);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Edit(Guid id, [Bind("MovieId,HallId,StartTime,Price,Id")] Screening screening)
@@ -77,6 +82,7 @@ public class ScreeningsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Delete(Guid? id)
     {
         if (id is null) return NotFound();
@@ -85,6 +91,7 @@ public class ScreeningsController : Controller
         return View(s);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(Guid id)

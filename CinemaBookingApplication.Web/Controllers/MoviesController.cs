@@ -1,6 +1,7 @@
 ﻿// CinemaBookingApplication.Web/Controllers/MoviesController.cs
 using CinemaBookingApplication.Domain.DomainModels;
 using CinemaBookingApplication.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CinemaBookingApplication.Web.Controllers;
@@ -24,6 +25,7 @@ public class MoviesController : Controller
     }
 
     // Import from TMDB (popular/top_rated or search term)
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Import(string query = "popular")
@@ -52,9 +54,10 @@ public class MoviesController : Controller
         if (m is null) return NotFound();
         return View(m);
     }
-
+    [Authorize(Roles = "Admin")]
     public IActionResult Create() => View();
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create([Bind("Title,Overview,Runtime,Rating,PosterUrl,Id")] Movie movie)
@@ -65,6 +68,7 @@ public class MoviesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Edit(Guid? id)
     {
         if (id is null) return NotFound();
@@ -73,6 +77,7 @@ public class MoviesController : Controller
         return View(m);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Edit(Guid id, [Bind("Title,Overview,Runtime,Rating,PosterUrl,Id")] Movie movie)
@@ -83,6 +88,7 @@ public class MoviesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Delete(Guid? id)
     {
         if (id is null) return NotFound();
@@ -91,6 +97,7 @@ public class MoviesController : Controller
         return View(m);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(Guid id)

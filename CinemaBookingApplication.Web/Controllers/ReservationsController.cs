@@ -30,6 +30,7 @@ public class ReservationsController : Controller
     }
 
     // GET: Reservations/Create
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         // dropdown со сите проекции: "MovieTitle (Hall) - StartTime - Price"
@@ -46,6 +47,7 @@ public class ReservationsController : Controller
     }
 
     // POST: Reservations/Create
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create(CreateReservationViewModel model)
@@ -82,6 +84,7 @@ public class ReservationsController : Controller
     }
 
     // GET: Reservations/Delete/5
+    [Authorize(Roles = "Admin")]
     public IActionResult Delete(Guid? id)
     {
         if (id is null) return NotFound();
@@ -91,6 +94,7 @@ public class ReservationsController : Controller
     }
 
     // POST: Reservations/Delete/5
+    [Authorize(Roles = "Admin")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(Guid id)

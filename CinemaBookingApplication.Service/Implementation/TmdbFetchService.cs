@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿// CinemaBookingApplication.Service/Implementation/TmdbFetchService.cs
+using System.Net.Http.Json;
 using CinemaBookingApplication.Domain.DomainModels;
 using CinemaBookingApplication.Service.Interface;
 using CinemaBookingApplication.Service.Options;
@@ -28,19 +29,19 @@ public class TmdbFetchService : IDataFetchService
 
     public async Task<int> ImportMoviesFromTmdbAsync(string query = "popular")
     {
-        // IMPORTANT: relative paths (no leading slash)
+        // 1) земи листа
         string path = query.Equals("popular", StringComparison.OrdinalIgnoreCase)
             ? "movie/popular"
             : query.Equals("top_rated", StringComparison.OrdinalIgnoreCase)
                 ? "movie/top_rated"
                 : $"search/movie?query={Uri.EscapeDataString(query)}";
 
-        _log.LogInformation("TMDB GET {Url}", new Uri(_http.BaseAddress!, path));
+        _log.LogInformation("TMDB LIST {Url}", new Uri(_http.BaseAddress!, path));
 
-        TmdbList? res;
+        TmdbList? list;
         try
         {
-            res = await _http.GetFromJsonAsync<TmdbList>(path);
+            list = await _http.GetFromJsonAsync<TmdbList>(path);
         }
         catch (HttpRequestException ex)
         {
@@ -48,22 +49,51 @@ public class TmdbFetchService : IDataFetchService
             throw new Exception("Import failed: could not reach TMDB (check ApiKey / network).");
         }
 
-        var results = res?.results ?? new List<TmdbMovie>();
+        var results = list?.results ?? new List<TmdbMovie>();
+        if (results.Count == 0) return 0;
 
-        var mapped = results.Select(r => new Movie
+        // 2) земи постоечки наслови за да избегнеме дупликати
+        var existingTitles = new HashSet<string>(
+            _movies.All().Select(m => m.Title.ToLowerInvariant()));
+
+        // 3) за секоја ставка – земи детали за runtime
+        var mapped = new List<Movie>();
+        foreach (var r in results)
         {
-            Id = Guid.NewGuid(),
-            Title = string.IsNullOrWhiteSpace(r.title) ? "Untitled" : r.title.Trim(),
-            Overview = r.overview ?? "",
-            Runtime = 0,
-            Rating = r.vote_average ?? 0,
-            PosterUrl = string.IsNullOrWhiteSpace(r.poster_path)
-                ? null
-                : _opt.ImageBase.TrimEnd('/') + r.poster_path
-        })
-        .GroupBy(m => m.Title.ToLowerInvariant())
-        .Select(g => g.First())
-        .ToList();
+            if (string.IsNullOrWhiteSpace(r.title)) continue;
+            var title = r.title.Trim();
+            var lower = title.ToLowerInvariant();
+            if (existingTitles.Contains(lower)) continue; // прескокни ако веќе постои
+
+            int runtime = 0;
+            try
+            {
+                if (r.id > 0)
+                {
+                    var detail = await _http.GetFromJsonAsync<TmdbMovieDetail>($"movie/{r.id}");
+                    runtime = detail?.runtime ?? 0;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _log.LogWarning(ex, "Failed to fetch details for movie id {Id}", r.id);
+            }
+
+            var mv = new Movie
+            {
+                Id = Guid.NewGuid(),
+                Title = title,
+                Overview = r.overview ?? "",
+                Runtime = runtime,                                  // <-- сега ќе е пополнето
+                Rating = r.vote_average ?? 0,
+                PosterUrl = string.IsNullOrWhiteSpace(r.poster_path)
+                    ? null
+                    : _opt.ImageBase.TrimEnd('/') + r.poster_path
+            };
+
+            mapped.Add(mv);
+            existingTitles.Add(lower);
+        }
 
         if (mapped.Count == 0) return 0;
 
@@ -71,12 +101,20 @@ public class TmdbFetchService : IDataFetchService
         return mapped.Count;
     }
 
+    // DTO-и што ги користиме од TMDB
     private sealed class TmdbList { public List<TmdbMovie> results { get; set; } = new(); }
+
     private sealed class TmdbMovie
     {
+        public int id { get; set; }                   // потребно за detail повик
         public string? title { get; set; }
         public string? overview { get; set; }
         public double? vote_average { get; set; }
         public string? poster_path { get; set; }
+    }
+
+    private sealed class TmdbMovieDetail
+    {
+        public int? runtime { get; set; }             // во минути
     }
 }

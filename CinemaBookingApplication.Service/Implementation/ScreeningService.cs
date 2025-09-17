@@ -41,8 +41,11 @@ public class ScreeningService : IScreeningService
     public int AvailableSeats(Guid screeningId)
     {
         var s = Get(screeningId) ?? throw new Exception("Screening not found");
-        var taken = _reservations.GetAll(x => x, predicate: r => r.ScreeningId == screeningId)
-                                 .Sum(r => r.Quantity);
+        var taken = _reservations.GetAll(x => x,
+                        predicate: r => r.ScreeningId == screeningId &&
+                                        (r.Status == ReservationStatus.Pending || r.Status == ReservationStatus.Confirmed))
+                     .Sum(r => r.Quantity);
         return (s.Hall?.Capacity ?? 0) - taken;
     }
+
 }

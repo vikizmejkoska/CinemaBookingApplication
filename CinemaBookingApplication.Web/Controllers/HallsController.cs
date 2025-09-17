@@ -1,6 +1,7 @@
 ﻿// CinemaBookingApplication.Web/Controllers/HallsController.cs
 using CinemaBookingApplication.Domain.DomainModels;
 using CinemaBookingApplication.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CinemaBookingApplication.Web.Controllers;
@@ -20,9 +21,10 @@ public class HallsController : Controller
         if (h is null) return NotFound();
         return View(h);
     }
-
+    [Authorize(Roles = "Admin")]
     public IActionResult Create() => View();
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create([Bind("Name,Capacity,Id")] Hall hall)
@@ -33,6 +35,7 @@ public class HallsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Edit(Guid? id)
     {
         if (id is null) return NotFound();
@@ -43,6 +46,7 @@ public class HallsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public IActionResult Edit(Guid id, [Bind("Name,Capacity,Id")] Hall hall)
     {
         if (id != hall.Id) return NotFound();
@@ -51,6 +55,7 @@ public class HallsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Delete(Guid? id)
     {
         if (id is null) return NotFound();
@@ -58,7 +63,7 @@ public class HallsController : Controller
         if (h is null) return NotFound();
         return View(h);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(Guid id)

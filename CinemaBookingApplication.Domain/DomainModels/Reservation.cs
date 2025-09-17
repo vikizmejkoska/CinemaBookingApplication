@@ -1,4 +1,6 @@
-﻿namespace CinemaBookingApplication.Domain.DomainModels;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CinemaBookingApplication.Domain.DomainModels;
 public class Reservation : BaseEntity
 {
     public Guid ScreeningId { get; set; }
@@ -6,6 +8,8 @@ public class Reservation : BaseEntity
 
     public string UserId { get; set; } = default!;
     public int Quantity { get; set; }
+   
+    [Column(TypeName = "decimal(18,2)")]
     public decimal TotalPrice { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
