@@ -3,13 +3,19 @@
 Ентитети: Movie, Hall, Screening, Reservation, ApplicationUser (+ DTO: CreateReservationViewModel).
 
 Релации:
+
 1-* меѓу Movie и Screening,
+
 1-* меѓу Hall и Screening,
+
 1-* меѓу Screening и Reservation,
+
 1-* меѓу ApplicationUser и Reservation
 
 Пристап:
+
 -Админ функционалности (CRUD за Movies/Halls/Screenings, TMDB import, преглед на сите резервации):
  логин: admin@cinema.local / Admin123!
+ 
 -Обичен корисник: доволно е да се регистрира; гледа и управува само со своите резервации.
 
